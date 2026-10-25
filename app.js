@@ -8,6 +8,56 @@ const clearButton = document.querySelector('#clear-completed');
 const storageMessage = document.querySelector('#storage-message');
 let currentFilter = 'all';
 let tasks = loadTasks();
+const effectsButton = document.querySelector('#effects-toggle');
+const mascotStage = document.querySelector('#mascot-stage');
+const reaction = document.querySelector('#reaction-text');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const EFFECTS_KEY = 'zhepka.effects.v1';
+let effectsEnabled = true;
+let celebrationTimer;
+let celebrationNumber = 0;
+try {
+  effectsEnabled = localStorage.getItem(EFFECTS_KEY) !== 'off';
+} catch { /* Настройка работает и без доступа к хранилищу. */ }
+
+function updateEffectsButton() {
+  effectsButton.setAttribute('aria-pressed', effectsEnabled);
+  effectsButton.textContent = `Эффекты: ${effectsEnabled ? 'вкл.' : 'выкл.'}`;
+}
+
+function stopCelebration() {
+  clearTimeout(celebrationTimer);
+  mascotStage.classList.remove('is-slapping');
+}
+
+function celebrate() {
+  const phrases = [
+    'ШЛЁП! Минус дело, плюс уважение.',
+    'Критический шлёп! Прокрастинация повержена.',
+    'Сугой! Жепка тобой гордится.',
+    'Ещё одна победа. Персик в восторге!',
+  ];
+  reaction.textContent = phrases[celebrationNumber++ % phrases.length];
+  stopCelebration();
+  if (!effectsEnabled || reducedMotion.matches) return;
+  // Перезапускаем короткую анимацию даже при быстрых повторных отметках.
+  void mascotStage.offsetWidth;
+  mascotStage.classList.add('is-slapping');
+  celebrationTimer = setTimeout(stopCelebration, 900);
+}
+
+effectsButton.addEventListener('click', () => {
+  effectsEnabled = !effectsEnabled;
+  if (!effectsEnabled) stopCelebration();
+  try {
+    localStorage.setItem(EFFECTS_KEY, effectsEnabled ? 'on' : 'off');
+  } catch { /* Задачи и переключатель остаются доступны. */ }
+  updateEffectsButton();
+});
+reducedMotion.addEventListener('change', () => {
+  if (reducedMotion.matches) stopCelebration();
+});
+updateEffectsButton();
 
 function warnAboutStorage() {
   storageMessage.textContent = 'Сохранение недоступно. Задачи останутся только до закрытия или обновления страницы.';
@@ -34,7 +84,7 @@ function loadTasks() {
 function saveAndRender() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    storageMessage.textContent = 'Сохраняется в этом браузере · Без регистрации и лишней суеты';
+    storageMessage.textContent = 'Задачи сохраняются в этом браузере · Жепка ничего не сливает';
   } catch {
     warnAboutStorage();
   }
@@ -59,6 +109,7 @@ function render() {
     checkbox.addEventListener('change', () => {
       task.completed = checkbox.checked;
       saveAndRender();
+      if (task.completed) celebrate();
       const nextRow = [...list.children].find(item => item.dataset.id === task.id);
       (nextRow?.querySelector('input') || filtersForCurrent()).focus();
     });
@@ -85,9 +136,9 @@ function render() {
   document.querySelector('#total-count').textContent = tasks.length;
   document.querySelector('#empty-state').hidden = visible.length > 0;
   const emptyMessages = {
-    all: ['Всё начинается с маленького шага', 'Добавь первое дело — и твой план на день готов.'],
-    active: ['Можно выдохнуть', 'Задач в работе нет. Добавь новую или отдохни.'],
-    completed: ['Первые победы впереди', 'Отметь выполненное дело, и оно появится здесь.'],
+    all: ['Новый квест сам себя не запишет', 'Добавь дело. Выполни его. Получи свой «шлёп!».'],
+    active: ['Все боссы повержены!', 'Жепка отдыхает. Ты тоже заслужил перерыв.'],
+    completed: ['Здесь будут твои победы', 'Поставь первую галочку — персик уже ждёт.'],
   };
   document.querySelector('#empty-title').textContent = emptyMessages[currentFilter][0];
   document.querySelector('#empty-description').textContent = emptyMessages[currentFilter][1];
