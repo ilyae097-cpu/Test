@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5f0">
+  <title>Мои дела — маленькие шаги каждый день</title>
+  <style>
+:root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #273c35; background: #f6f5f0; font-synthesis: none; --green: #316851; --muted: #667267; --line: #e9ebe4; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid #9eb8a4; outline-offset: 4px; }
+[hidden] { display: none !important; }
+.app { max-width: 808px; padding: 48px 24px 32px; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 750; letter-spacing: 2px; }
+.brand span { display: grid; place-items: center; width: 28px; height: 28px; background: var(--green); border-radius: 9px; color: white; font-size: 19px; }
+.eyebrow { margin: 65px 0 12px; color: var(--muted); font-size: 10px; letter-spacing: 2.5px; font-weight: 650; }
+h1 { margin: 0; font-size: clamp(44px, 8vw, 62px); font-weight: 650; letter-spacing: -2.5px; line-height: 1.12; }
+h1 span { color: #9ba874; }
+.subtitle { font-size: 15px; color: var(--muted); margin: 18px 0 32px; line-height: 1.6; }
+.task-panel { background: #fff; border: 1px solid #e5e7df; border-radius: 20px; box-shadow: 0 8px 40px #263b3210; overflow: hidden; }
+.add-form { display: flex; gap: 12px; padding: 24px; }
+.add-form input { min-width: 0; flex: 1; border: 1px solid #e3e7df; border-radius: 10px; background: #fafbf8; padding: 14px 16px; color: #273c35; font-size: 14px; }
+input::placeholder { color: #737c71; }
+.add-button { border: 0; border-radius: 10px; padding: 12px 19px; background: var(--green); color: white; font-size: 13px; font-weight: 600; }
+.add-button:hover { background: #24543f; }
+.add-button span { font-size: 20px; vertical-align: -1px; margin-right: 5px; font-weight: 400; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 0 24px 18px; border-bottom: 1px solid var(--line); }
+.filters { display: flex; gap: 4px; }
+.filters button { border: 0; background: transparent; color: var(--muted); font-size: 12px; padding: 8px 12px; border-radius: 7px; }
+.filters button[aria-pressed="true"] { background: #edf2e9; color: #345a43; font-weight: 650; }
+#total-count { padding: 1px 5px; margin-left: 3px; border-radius: 4px; background: #dfe8d7; font-size: 10px; }
+.text-button { border: none; background: transparent; color: var(--muted); padding: 8px 0; font-size: 11px; }
+.text-button:hover { color: #973c3c; }
+.task-list { list-style: none; padding: 0; margin: 0; }
+.task-row { display: flex; align-items: center; gap: 12px; min-height: 65px; margin: 0 24px; border-bottom: 1px solid var(--line); }
+.task-row:last-child { border-bottom: none; }
+.task-label { display: flex; align-items: center; gap: 13px; flex: 1; min-width: 0; cursor: pointer; padding: 16px 0; }
+.task-checkbox { flex-shrink: 0; width: 20px; height: 20px; margin: 0; accent-color: var(--green); cursor: pointer; }
+.task-title { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.task-row.completed .task-title { color: #727d72; text-decoration: line-through; }
+.delete-button { flex-shrink: 0; border: none; background: none; border-radius: 6px; width: 32px; height: 32px; color: #737e71; font-size: 22px; }
+.delete-button:hover { color: #a44242; background: #fcf0ee; }
+.empty-state { padding: 47px 20px 52px; text-align: center; }
+.empty-icon { display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 19px; border-radius: 17px; background: #f0f3e9; color: #8a9a74; font-size: 28px; transform: rotate(-6deg); }
+.empty-state h2 { font-size: 16px; font-weight: 600; margin: 0 0 10px; }
+.empty-state p { color: var(--muted); font-size: 13px; margin: 0; line-height: 1.6; }
+.panel-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #fbfcf9; padding: 17px 24px; border-top: 1px solid var(--line); }
+.panel-footer p { font-size: 11px; color: var(--muted); margin: 0; }
+.progress { width: 100px; height: 5px; background: #e8ecdf; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+.progress span { display: block; height: 100%; width: 0; background: #8eaa70; transition: width 180ms; }
+.storage-note { text-align: center; color: var(--muted); font-size: 11px; margin-top: 20px; line-height: 1.7; }
+.tip { margin-top: 54px; color: var(--muted); font-size: 12px; text-align: center; }
+.tip span { color: #9eae8b; margin-right: 7px; font-size: 20px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (max-width: 520px) {
+  .app { padding: 28px 16px; }
+  .eyebrow { margin-top: 42px; }
+  .subtitle { font-size: 14px; }
+  .add-form { padding: 16px; gap: 8px; flex-wrap: wrap; }
+  .add-form input { flex-basis: 100%; }
+  .add-button { width: 100%; }
+  .toolbar { padding: 0 16px 14px; flex-wrap: wrap; }
+  .filters button { padding: 8px 10px; }
+  .task-row { margin: 0 16px; }
+  .panel-footer { padding: 16px; }
+  .empty-state h2 { font-size: 15px; }
+  .tip { margin-top: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { .progress span { transition: none; } }
+
+</style>
+  
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand"><span aria-hidden="true">✓</span> МАЛЕНЬКИЕ ШАГИ</div>
+      <p class="eyebrow">ПЛАН НА ХОРОШИЙ ДЕНЬ</p>
+      <h1>Мои дела<span>.</span></h1>
+      <p class="subtitle">Освободи голову. Запиши важное. Начни с одного дела.</p>
+    </header>
+    <section class="task-panel" aria-label="Список дел">
+      <form id="task-form" class="add-form">
+        <label class="sr-only" for="task-input">Новая задача</label>
+        <input id="task-input" type="text" placeholder="Что хочешь сделать?" maxlength="200" autocomplete="off" required>
+        <button class="add-button" type="submit"><span aria-hidden="true">+</span> Добавить</button>
+      </form>
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="Показать задачи">
+          <button type="button" data-filter="all" aria-pressed="true">Все <span id="total-count">0</span></button>
+          <button type="button" data-filter="active" aria-pressed="false">В работе</button>
+          <button type="button" data-filter="completed" aria-pressed="false">Готово</button>
+        </div>
+        <button id="clear-completed" class="text-button" type="button" hidden>Убрать готовые</button>
+      </div>
+      <ul id="task-list" class="task-list" aria-label="Задачи"></ul>
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon" aria-hidden="true">✓</div>
+        <h2 id="empty-title">Всё начинается с маленького шага</h2>
+        <p id="empty-description">Добавь первое дело — и твой план на день готов.</p>
+      </div>
+      <footer class="panel-footer">
+        <p id="progress-text" role="status" aria-live="polite">Пока нет задач</p>
+        <div id="progress" class="progress" role="progressbar" aria-label="Выполнено задач" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+      </footer>
+    </section>
+    <p id="storage-message" class="storage-note" role="status">Сохраняется в этом браузере · Без регистрации и лишней суеты</p>
+    <aside class="tip"><span aria-hidden="true">↳</span> Большие планы начинаются с небольших дел.</aside>
+  </main>
+<script>
+// Задачи хранятся только в этом браузере, а не на GitHub или на сервере.
+const STORAGE_KEY = 'little-steps.tasks.v1';
+const form = document.querySelector('#task-form');
+const input = document.querySelector('#task-input');
+const list = document.querySelector('#task-list');
+const filters = document.querySelectorAll('[data-filter]');
+const clearButton = document.querySelector('#clear-completed');
+const storageMessage = document.querySelector('#storage-message');
+let currentFilter = 'all';
+let tasks = loadTasks();
+
+function warnAboutStorage() {
+  storageMessage.textContent = 'Сохранение недоступно. Задачи останутся только до закрытия или обновления страницы.';
+}
+
+function loadTasks() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    if (!Array.isArray(stored)) throw new Error('Некорректные данные');
+    const ids = new Set();
+    return stored.filter(task => {
+      if (!task || typeof task.id !== 'string' || ids.has(task.id) ||
+          typeof task.text !== 'string' || !task.text.trim() ||
+          task.text.length > 200 || typeof task.completed !== 'boolean') return false;
+      ids.add(task.id);
+      return true;
+    });
+  } catch {
+    warnAboutStorage();
+    return [];
+  }
+}
+
+function saveAndRender() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    storageMessage.textContent = 'Сохраняется в этом браузере · Без регистрации и лишней суеты';
+  } catch {
+    warnAboutStorage();
+  }
+  render();
+}
+
+function render() {
+  const completed = tasks.filter(task => task.completed).length;
+  const visible = tasks.filter(task => currentFilter === 'all' ||
+    (currentFilter === 'completed' ? task.completed : !task.completed));
+  list.replaceChildren();
+
+  for (const task of visible) {
+    const row = document.createElement('li');
+    row.className = `task-row${task.completed ? ' completed' : ''}`;
+    const label = document.createElement('label');
+    label.className = 'task-label';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'task-checkbox';
+    checkbox.checked = task.completed;
+    checkbox.addEventListener('change', () => {
+      task.completed = checkbox.checked;
+      saveAndRender();
+      const nextRow = [...list.children].find(item => item.dataset.id === task.id);
+      (nextRow?.querySelector('input') || filtersForCurrent()).focus();
+    });
+    const title = document.createElement('span');
+    title.className = 'task-title';
+    // textContent показывает введённый текст как текст, не исполняя HTML.
+    title.textContent = task.text;
+    label.append(checkbox, title);
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'delete-button';
+    remove.textContent = '×';
+    remove.setAttribute('aria-label', `Удалить задачу: ${task.text}`);
+    remove.addEventListener('click', () => {
+      tasks = tasks.filter(item => item.id !== task.id);
+      saveAndRender();
+      input.focus();
+    });
+    row.dataset.id = task.id;
+    row.append(label, remove);
+    list.append(row);
+  }
+
+  document.querySelector('#total-count').textContent = tasks.length;
+  document.querySelector('#empty-state').hidden = visible.length > 0;
+  const emptyMessages = {
+    all: ['Всё начинается с маленького шага', 'Добавь первое дело — и твой план на день готов.'],
+    active: ['Можно выдохнуть', 'Задач в работе нет. Добавь новую или отдохни.'],
+    completed: ['Первые победы впереди', 'Отметь выполненное дело, и оно появится здесь.'],
+  };
+  document.querySelector('#empty-title').textContent = emptyMessages[currentFilter][0];
+  document.querySelector('#empty-description').textContent = emptyMessages[currentFilter][1];
+  document.querySelector('#progress-text').textContent = tasks.length
+    ? `Готово ${completed} из ${tasks.length} · Осталось: ${tasks.length - completed}`
+    : 'Пока нет задач';
+  const percent = tasks.length ? Math.round(completed / tasks.length * 100) : 0;
+  document.querySelector('#progress').setAttribute('aria-valuenow', percent);
+  document.querySelector('#progress-fill').style.width = `${percent}%`;
+  clearButton.hidden = completed === 0;
+  filters.forEach(button => button.setAttribute('aria-pressed', button.dataset.filter === currentFilter));
+}
+
+function filtersForCurrent() {
+  return document.querySelector(`[data-filter="${currentFilter}"]`);
+}
+
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  const text = input.value.trim();
+  if (!text || text.length > 200) {
+    input.focus();
+    return;
+  }
+  const id = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  tasks.push({ id, text, completed: false });
+  // Новая задача должна быть видна и при добавлении из вкладки «Готово».
+  currentFilter = 'all';
+  input.value = '';
+  saveAndRender();
+  input.focus();
+});
+
+filters.forEach(button => button.addEventListener('click', () => {
+  currentFilter = button.dataset.filter;
+  render();
+}));
+
+clearButton.addEventListener('click', () => {
+  tasks = tasks.filter(task => !task.completed);
+  saveAndRender();
+  filtersForCurrent().focus();
+});
+
+render();
+
+</script>
+</body>
+</html>

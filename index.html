@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5f0">
+  <title>Мои дела — маленькие шаги каждый день</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="brand"><span aria-hidden="true">✓</span> МАЛЕНЬКИЕ ШАГИ</div>
+      <p class="eyebrow">ПЛАН НА ХОРОШИЙ ДЕНЬ</p>
+      <h1>Мои дела<span>.</span></h1>
+      <p class="subtitle">Освободи голову. Запиши важное. Начни с одного дела.</p>
+    </header>
+    <section class="task-panel" aria-label="Список дел">
+      <form id="task-form" class="add-form">
+        <label class="sr-only" for="task-input">Новая задача</label>
+        <input id="task-input" type="text" placeholder="Что хочешь сделать?" maxlength="200" autocomplete="off" required>
+        <button class="add-button" type="submit"><span aria-hidden="true">+</span> Добавить</button>
+      </form>
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="Показать задачи">
+          <button type="button" data-filter="all" aria-pressed="true">Все <span id="total-count">0</span></button>
+          <button type="button" data-filter="active" aria-pressed="false">В работе</button>
+          <button type="button" data-filter="completed" aria-pressed="false">Готово</button>
+        </div>
+        <button id="clear-completed" class="text-button" type="button" hidden>Убрать готовые</button>
+      </div>
+      <ul id="task-list" class="task-list" aria-label="Задачи"></ul>
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon" aria-hidden="true">✓</div>
+        <h2 id="empty-title">Всё начинается с маленького шага</h2>
+        <p id="empty-description">Добавь первое дело — и твой план на день готов.</p>
+      </div>
+      <footer class="panel-footer">
+        <p id="progress-text" role="status" aria-live="polite">Пока нет задач</p>
+        <div id="progress" class="progress" role="progressbar" aria-label="Выполнено задач" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+      </footer>
+    </section>
+    <p id="storage-message" class="storage-note" role="status">Сохраняется в этом браузере · Без регистрации и лишней суеты</p>
+    <aside class="tip"><span aria-hidden="true">↳</span> Большие планы начинаются с небольших дел.</aside>
+  </main>
+</body>
+</html>
